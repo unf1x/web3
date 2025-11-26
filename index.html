@@ -28,6 +28,43 @@
             <div class="game-board" id="game-board">
                 <div class="grid-background" id="grid-background"></div>
                 <div class="tiles-layer" id="tiles-layer"></div>
+                <div class="game-over-overlay hidden" id="game-over-overlay">
+                    <div class="game-over-content">
+                        <p id="game-over-message">Игра окончена! Нет доступных ходов.</p>
+
+                        <div id="save-record-block">
+                            <input
+                                    type="text"
+                                    id="player-name"
+                                    placeholder="Ваше имя"
+                                    maxlength="20"
+                            />
+                            <button id="save-score-btn">Сохранить результат</button>
+                        </div>
+
+                        <p id="save-result-message" class="hidden">
+                            Ваш рекорд сохранён.
+                        </p>
+
+                        <div class="game-over-buttons">
+                            <button id="restart-btn">Начать заново</button>
+                            <button id="show-leaderboard-btn">
+                                Таблица лидеров
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="touch-controls" class="touch-controls hidden">
+                <div class="row">
+                    <button data-dir="up">▲</button>
+                </div>
+                <div class="row">
+                    <button data-dir="left">◀</button>
+                    <button data-dir="down">▼</button>
+                    <button data-dir="right">▶</button>
+                </div>
             </div>
         </section>
 
