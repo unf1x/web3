@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>2048 — лабораторная</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="game.js" defer></script>
+</head>
+<body>
+<div class="page">
+    <header class="top-bar">
+        <h1>2048</h1>
+        <div class="scoreboards">
+            <div class="score-box">
+                <span class="label">Счёт</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="score-box">
+                <span class="label">Лучший</span>
+                <span class="value" id="best-score">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-layout">
+        <section class="board-section">
+            <div class="game-board" id="game-board">
+                <div class="grid-background" id="grid-background"></div>
+                <div class="tiles-layer" id="tiles-layer"></div>
+            </div>
+        </section>
+
+        <aside class="side-panel">
+            <button id="new-game-btn" class="big-btn">Начать заново</button>
+            <button id="undo-btn" class="big-btn" disabled>Отменить ход</button>
+            <button id="open-leaderboard-btn" class="big-btn">
+                Таблица лидеров
+            </button>
+            <p class="hint-desktop">
+                Управление: стрелки на клавиатуре.
+            </p>
+            <p class="hint-mobile">
+                Управление: кнопки под полем.
+            </p>
+        </aside>
+    </main>
+
+</div>
+</body>
+</html>
