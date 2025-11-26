@@ -111,3 +111,143 @@ h1 {
 .hint-mobile {
   display: none;
 }
+
+
+.game-board {
+  position: relative;
+  background: #bbada0;
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.grid-background {
+  position: absolute;
+  inset: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.grid-cell {
+  background: #cdc1b4;
+  border-radius: 6px;
+}
+
+.tiles-layer {
+  position: absolute;
+  inset: 10px;
+}
+
+.tile {
+  position: absolute;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 1;
+  color: #776e65;
+  --x: 0px;
+  --y: 0px;
+  transform: translate(var(--x), var(--y));
+  transition: transform 0.15s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+
+.tile-2 {
+  background: #eee4da;
+  color: #776e65;
+}
+
+.tile-4 {
+  background: #ede0c8;
+  color: #776e65;
+}
+
+.tile-8 {
+  background: #f2b179;
+  color: #f9f6f2;
+}
+
+.tile-16 {
+  background: #f59563;
+  color: #f9f6f2;
+}
+
+.tile-32 {
+  background: #f67c5f;
+  color: #f9f6f2;
+}
+
+.tile-64 {
+  background: #f65e3b;
+  color: #f9f6f2;
+}
+
+.tile-128 {
+  background: #edcf72;
+  color: #f9f6f2;
+  font-size: 24px;
+}
+
+.tile-256 {
+  background: #edcc61;
+  color: #f9f6f2;
+  font-size: 24px;
+}
+
+.tile-512 {
+  background: #edc850;
+  color: #f9f6f2;
+  font-size: 24px;
+}
+
+.tile-1024 {
+  background: #edc53f;
+  color: #f9f6f2;
+  font-size: 20px;
+}
+
+.tile-2048,
+.tile-big {
+  background: #edc22e;
+  color: #f9f6f2;
+  font-size: 20px;
+}
+
+.tile-new {
+  animation: tile-appear 0.2s ease-out;
+}
+
+@keyframes tile-appear {
+  0% {
+    transform: translate(var(--x), var(--y)) scale(0);
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(1);
+  }
+}
+
+.tile-merged {
+  animation: tile-merge 0.2s ease-out;
+}
+
+@keyframes tile-merge {
+  0% {
+    transform: translate(var(--x), var(--y)) scale(1);
+  }
+  50% {
+    transform: translate(var(--x), var(--y)) scale(1.15);
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(1);
+  }
+}
