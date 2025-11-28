@@ -24,5 +24,5 @@
   - на мобильных - экранные кнопки (вверх / вниз / влево / вправо), скрываются при просмотре рекордов
 
 ## Деплой
-GitHub Pages: https://unf1x.github.io/web3
+Netlify: https://preeminent-chebakia-c7b5c8.netlify.app
 
