@@ -26,9 +26,81 @@
   const playerNameInput = document.getElementById("player-name");
   const leaderboardModal = document.getElementById("leaderboard-modal");
   const leaderboardBody = document.getElementById("leaderboard-body");
+  const GAME_STATE_KEY = "lab2048-game-state";
+  const LEADERBOARD_KEY = "lab2048-leaderboard";
 
   const tileElements = new Map();
   let leaderboard = [];
+  function saveGameState() {
+    const state = {
+      grid: serializeGridValues(),
+      score,
+      gameOver,
+      lastState,
+      scoreSavedForThisGame,
+    };
+    try {
+      localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error("Не удалось сохранить состояние игры", e);
+    }
+  }
+
+  function loadGameState() {
+    const raw = localStorage.getItem(GAME_STATE_KEY);
+    if (!raw) {
+      startNewGame(true);
+      return;
+    }
+
+    try {
+      const state = JSON.parse(raw);
+      const gridValues = state.grid || [];
+      score = state.score || 0;
+      gameOver = !!state.gameOver;
+      lastState = state.lastState || null;
+      scoreSavedForThisGame = !!state.scoreSavedForThisGame;
+
+      grid = createEmptyGrid();
+      tiles = [];
+      tileElements.clear();
+      tilesLayer.innerHTML = "";
+      nextTileId = 1;
+
+      for (let r = 0; r < SIZE; r++) {
+        const rowVals = gridValues[r] || [];
+        for (let c = 0; c < SIZE; c++) {
+          const val = rowVals[c] || 0;
+          if (val) {
+            const tile = {
+              id: nextTileId++,
+              row: r,
+              col: c,
+              value: val,
+              isNew: false,
+              justMerged: false,
+            };
+            grid[r][c] = tile;
+            tiles.push(tile);
+          }
+        }
+      }
+
+      updateScoreDisplay();
+      if (gameOver) {
+        showGameOverOverlay();
+        enableUndoButton(false);
+      } else {
+        hideGameOverOverlay();
+        enableUndoButton(!!lastState);
+      }
+      enableTouchControls(!gameOver && !isLeaderboardOpen);
+      renderTiles();
+    } catch (e) {
+      console.error("Не удалось прочитать сохранённую игру", e);
+      startNewGame(true);
+    }
+  }
 
   function createEmptyGrid() {
     const arr = [];
@@ -331,6 +403,7 @@
     }
 
     renderTiles();
+    saveGameState();
     checkGameOver();
   }
 
@@ -344,6 +417,47 @@
       values.push(row);
     }
     return values;
+  }
+  function undoMove() {
+    if (!lastState || gameOver) return;
+
+    grid = createEmptyGrid();
+    tiles = [];
+    tileElements.clear();
+    tilesLayer.innerHTML = "";
+    nextTileId = 1;
+
+    const gridValues = lastState.grid || [];
+    score = lastState.score || 0;
+    gameOver = false;
+    scoreSavedForThisGame = false;
+    lastState = null;
+
+    for (let r = 0; r < SIZE; r++) {
+      const rowVals = gridValues[r] || [];
+      for (let c = 0; c < SIZE; c++) {
+        const val = rowVals[c] || 0;
+        if (val) {
+          const tile = {
+            id: nextTileId++,
+            row: r,
+            col: c,
+            value: val,
+            isNew: false,
+            justMerged: false,
+          };
+          grid[r][c] = tile;
+          tiles.push(tile);
+        }
+      }
+    }
+
+    updateScoreDisplay();
+    enableUndoButton(false);
+    hideGameOverOverlay();
+    renderTiles();
+    saveGameState();
+    enableTouchControls(true);
   }
 
   function startNewGame() {
@@ -364,6 +478,7 @@
     for (let i = 0; i < startTilesCount; i++) addRandomTile();
 
     renderTiles();
+    saveGameState();
     enableTouchControls(true);
   }
 
@@ -374,9 +489,7 @@
     if (newGameBtn) newGameBtn.addEventListener("click", () => startNewGame(false));
     if (restartBtn) restartBtn.addEventListener("click", () => startNewGame(false));
 
-    undoBtn.addEventListener("click", () => {
-      //TODO
-    });
+    undoBtn.addEventListener("click", undoMove);
 
     document.addEventListener("keydown", (e) => {
       if (!isGameActive()) return;
@@ -414,7 +527,133 @@
           handleMove(dir);
         });
       });
+
+    document
+        .getElementById("open-leaderboard-btn")
+        .addEventListener("click", openLeaderboard);
+
+      document
+        .getElementById("show-leaderboard-btn")
+        .addEventListener("click", openLeaderboard);
+
+      document
+        .getElementById("close-leaderboard-btn")
+        .addEventListener("click", closeLeaderboard);
+
+      document
+        .getElementById("save-score-btn")
+        .addEventListener("click", handleSaveScore);
   }
+
+  function loadLeaderboard() {
+    const raw = localStorage.getItem(LEADERBOARD_KEY);
+    if (!raw) {
+      leaderboard = [];
+      updateBestScoreFromLeaderboard();
+      return;
+    }
+    try {
+      leaderboard = JSON.parse(raw) || [];
+    } catch (e) {
+      leaderboard = [];
+    }
+    updateBestScoreFromLeaderboard();
+  }
+
+  function saveLeaderboard() {
+    try {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(leaderboard));
+    } catch (e) {
+      console.error("Не удалось сохранить таблицу лидеров", e);
+    }
+  }
+
+  function updateBestScoreFromLeaderboard() {
+    let best = 0;
+    if (leaderboard.length > 0) {
+      best = leaderboard[0].score || 0;
+    }
+    if (score > best) best = score;
+    bestScoreElement.textContent = best;
+  }
+
+  function addRecord(name, points) {
+    const entry = {
+      name,
+      score: points,
+      ts: Date.now(),
+    };
+    leaderboard.push(entry);
+    leaderboard.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return b.ts - a.ts;
+    });
+    leaderboard = leaderboard.slice(0, 10);
+    saveLeaderboard();
+    updateBestScoreFromLeaderboard();
+  }
+
+  function renderLeaderboardTable() {
+    leaderboardBody.innerHTML = "";
+    if (leaderboard.length === 0) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 4;
+      cell.textContent = "Пока нет сохранённых рекордов.";
+      row.appendChild(cell);
+      leaderboardBody.appendChild(row);
+      return;
+    }
+    leaderboard.forEach((entry, index) => {
+      const tr = document.createElement("tr");
+
+      const posTd = document.createElement("td");
+      posTd.textContent = index + 1;
+
+      const nameTd = document.createElement("td");
+      nameTd.textContent = entry.name || "Без имени";
+
+      const scoreTd = document.createElement("td");
+      scoreTd.textContent = entry.score;
+
+      const dateTd = document.createElement("td");
+      const date = new Date(entry.ts);
+      dateTd.textContent = date.toLocaleString("ru-RU");
+
+      tr.appendChild(posTd);
+      tr.appendChild(nameTd);
+      tr.appendChild(scoreTd);
+      tr.appendChild(dateTd);
+      leaderboardBody.appendChild(tr);
+    });
+  }
+
+  function openLeaderboard() {
+    isLeaderboardOpen = true;
+    leaderboardModal.classList.remove("hidden");
+    renderLeaderboardTable();
+    enableTouchControls(false);
+  }
+
+  function closeLeaderboard() {
+    isLeaderboardOpen = false;
+    leaderboardModal.classList.add("hidden");
+    enableTouchControls(!gameOver);
+  }
+
+  function handleSaveScore() {
+    if (!gameOver || scoreSavedForThisGame) return;
+    let name = playerNameInput.value.trim();
+    if (!name) name = "Без имени";
+    addRecord(name, score);
+    scoreSavedForThisGame = true;
+    saveGameState();
+
+    saveRecordBlock.classList.add("hidden");
+    saveResultMessage.classList.remove("hidden");
+    gameOverMessage.textContent = "Ваш рекорд сохранён.";
+  }
+
 
   createGridBackground();
   setupEventListeners();
