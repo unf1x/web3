@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>2048</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" type="image/png" href="favicon-2048.png" />
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="game.js" defer></script>
+</head>
+<body>
+<div class="page">
+    <header class="top-bar">
+        <h1>2048</h1>
+        <div class="scoreboards">
+            <div class="score-box">
+                <span class="label">Счёт</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="score-box">
+                <span class="label">Лучший</span>
+                <span class="value" id="best-score">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-layout">
+        <section class="board-section">
+            <div class="game-board" id="game-board">
+                <div class="grid-background" id="grid-background"></div>
+                <div class="tiles-layer" id="tiles-layer"></div>
+                <div class="game-over-overlay hidden" id="game-over-overlay">
+                    <div class="game-over-content">
+                        <p id="game-over-message">Игра окончена! Нет доступных ходов.</p>
+
+                        <div id="save-record-block">
+                            <input
+                                    type="text"
+                                    id="player-name"
+                                    placeholder="Ваше имя"
+                                    maxlength="20"
+                            />
+                            <button id="save-score-btn">Сохранить результат</button>
+                        </div>
+
+                        <p id="save-result-message" class="hidden">
+                            Ваш рекорд сохранён.
+                        </p>
+
+                        <div class="game-over-buttons">
+                            <button id="restart-btn">Начать заново</button>
+                            <button id="show-leaderboard-btn">
+                                Таблица лидеров
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="touch-controls" class="touch-controls hidden">
+                <div class="row">
+                    <button data-dir="up">▲</button>
+                </div>
+                <div class="row">
+                    <button data-dir="left">◀</button>
+                    <button data-dir="down">▼</button>
+                    <button data-dir="right">▶</button>
+                </div>
+            </div>
+        </section>
+
+        <aside class="side-panel">
+            <button id="new-game-btn" class="big-btn">Начать заново</button>
+            <button id="undo-btn" class="big-btn" disabled>Отменить ход</button>
+            <button id="open-leaderboard-btn" class="big-btn">
+                Таблица лидеров
+            </button>
+            <p class="hint-desktop">
+                Управление: стрелки на клавиатуре.
+            </p>
+            <p class="hint-mobile">
+                Управление: кнопки под полем.
+            </p>
+        </aside>
+    </main>
+
+</div>
+
+<div class="modal hidden" id="leaderboard-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Таблица лидеров</h2>
+            <button class="close-modal" id="close-leaderboard-btn">✕</button>
+        </div>
+        <table class="leaderboard-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>Очки</th>
+                <th>Дата</th>
+            </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
