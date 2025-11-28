@@ -27,4 +27,4 @@
 Netlify: https://preeminent-chebakia-c7b5c8.netlify.app
 
 ## Видео-презентация
-https://drive.google.com/file/d/1cUSdNHOjbq9wcQZ6YJB7YtzsOOr9EaAg/view?usp=drive_link
+https://drive.google.com/file/d/13D0i-mYM3r2euq-t_1e0H9gHivT-cd_P/view?usp=sharing
