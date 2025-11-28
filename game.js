@@ -657,5 +657,6 @@
 
   createGridBackground();
   setupEventListeners();
-  startNewGame();
+  loadLeaderboard();
+  loadGameState();
 })();
