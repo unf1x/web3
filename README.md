@@ -26,3 +26,5 @@
 ## Деплой
 Netlify: https://preeminent-chebakia-c7b5c8.netlify.app
 
+## Видео-презентация
+https://drive.google.com/file/d/1cUSdNHOjbq9wcQZ6YJB7YtzsOOr9EaAg/view?usp=drive_link
