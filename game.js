@@ -47,6 +47,32 @@
     const y = CELL_GAP + row * (tileSize + CELL_GAP);
     return { x, y, size: tileSize };
   }
+  function randomChoice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function addRandomTile() {
+    const emptyCells = [];
+    for (let r = 0; r < SIZE; r++) {
+      for (let c = 0; c < SIZE; c++) {
+        if (!grid[r][c]) emptyCells.push({ r, c });
+      }
+    }
+    if (emptyCells.length === 0) return;
+
+    const { r, c } = randomChoice(emptyCells);
+    const value = Math.random() < 0.9 ? 2 : 4;
+    const tile = {
+      id: nextTileId++,
+      row: r,
+      col: c,
+      value,
+      isNew: true,
+      justMerged: false,
+    };
+    grid[r][c] = tile;
+    tiles.push(tile);
+  }
 
   function renderTiles() {
     recalcTileMetrics();
@@ -94,6 +120,12 @@
     tilesLayer.innerHTML = "";
     nextTileId = 1;
     scoreElement.textContent = "0";
+
+    const startTilesCount = Math.floor(Math.random() * 3) + 1;
+    for (let i = 0; i < startTilesCount; i++) {
+      addRandomTile();
+    }
+
     renderTiles();
   }
 
